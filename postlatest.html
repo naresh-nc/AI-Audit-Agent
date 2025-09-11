@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Chatbot</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f7fa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .chat-container {
+        width: 400px;
+        height: 600px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .chat-header {
+        background: #4a90e2;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .chat-box {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background: #f9f9f9;
+      }
+
+      .chat-message {
+        margin: 10px 0;
+        padding: 10px 14px;
+        border-radius: 8px;
+        max-width: 100%;
+        line-height: 1.4;
+        white-space: pre-wrap;
+      }
+
+      .user-message {
+        background: #4a90e2;
+        color: white;
+        align-self: flex-end;
+        text-align: right;
+      }
+
+      .bot-message {
+        background: #e5e5ea;
+        color: black;
+        align-self: flex-start;
+        text-align: left;
+      }
+
+      .chat-input {
+        display: flex;
+        border-top: 1px solid #ddd;
+      }
+
+      .chat-input input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        outline: none;
+      }
+
+      .chat-input button {
+        padding: 10px 15px;
+        background: #4a90e2;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      .chat-input button:hover {
+        background: #357ab8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-container">
+      <div class="chat-header">AI Chatbot</div>
+      <div class="chat-box" id="chat-box"></div>
+      <div class="chat-input">
+        <input type="text" id="user-input" placeholder="Type your message..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+
+    <script>
+      const chatBox = document.getElementById("chat-box");
+      const userInput = document.getElementById("user-input");
+
+      // Production webhook
+      const webhookUrl =
+        "https://ca-ai.app.n8n.cloud/webhook/986e46ba-be8f-4045-a16d-329c19494525";
+
+      function appendMessage(message, sender) {
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add(
+          "chat-message",
+          sender === "user" ? "user-message" : "bot-message"
+        );
+        messageDiv.textContent = message;
+        chatBox.appendChild(messageDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        return messageDiv; // Return the element to allow later modification
+      }
+
+      async function sendMessage() {
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        // Show user message
+        appendMessage(message, "user");
+        userInput.value = "";
+
+        // Show loading indicator
+        const loadingDiv = appendMessage("Bot is typing...", "bot");
+
+        try {
+          const response = await fetch(webhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: message }),
+          });
+
+          const data = await response.json();
+          const botReply =
+            data?.output ?? data?.answer ?? "I received your message!";
+          const cleaned = botReply.replace(/\*/g, "").trim();
+
+          // Replace loading message with real bot response
+          loadingDiv.textContent = cleaned;
+        } catch (error) {
+          console.error("Error:", error);
+          loadingDiv.textContent = "⚠️ Error connecting to chatbot.";
+        }
+      }
+
+      // Allow pressing Enter to send
+      userInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") sendMessage();
+      });
+    </script>
+  </body>
+</html>
