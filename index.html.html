@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Chatbot</title>
+    <title>AI-Audit Assistant</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -130,7 +130,7 @@
         userInput.value = "";
 
         // Show loading indicator
-        const loadingDiv = appendMessage("Bot is typing...", "bot");
+        const loadingDiv = appendMessage("AI Assistant is typing...", "bot");
 
         try {
           const response = await fetch(webhookUrl, {
