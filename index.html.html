@@ -222,6 +222,10 @@
           loadingDiv.textContent = "⚠️ Error connecting to chatbot.";
         }
       }
+       
+      function quickAsk(text) {
+      sendMessage(text);
+    }
 
       // Allow pressing Enter to send
       userInput.addEventListener("keypress", function (e) {
