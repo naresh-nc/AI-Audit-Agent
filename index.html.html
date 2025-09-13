@@ -192,13 +192,13 @@
         return messageDiv; // Return the element to allow later modification
       }
 
-      async function sendMessage() {
-        const message = userInput.value.trim();
+      async function sendMessage(customText) {
+        const message = customText || userInput.value.trim();
         if (!message) return;
 
         // Show user message
         appendMessage(message, "user");
-        userInput.value = "";
+        if (!customText) userInput.value = "";
 
         // Show loading indicator
         const loadingDiv = appendMessage("AI assistant is typing...", "bot");
@@ -225,7 +225,7 @@
        
       function quickAsk(text) {
       sendMessage(text);
-    }
+      }
 
       // Allow pressing Enter to send
       userInput.addEventListener("keypress", function (e) {
