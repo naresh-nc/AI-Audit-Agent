@@ -4,102 +4,173 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI-Audit Assistant</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background: #f4f7fa;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-      }
+    
+     <style>
+    /* ===== Global Page ===== */
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      /* Deeper blue → pink gradient */
+      background: linear-gradient(135deg, #5aa0ff 0%, #ff79c6 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
 
-      .chat-container {
-        width: 400px;
-        height: 600px;
-        background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
+    /* ===== Team Name Heading ===== */
+    .team-name {
+      font-size: 36px;
+      font-weight: 800;
+      color: #001f4d;
+      /* Navy */
+      text-align: center;
+      letter-spacing: 1px;
+      margin-bottom: 40px;
+      text-transform: uppercase;
+    }
 
-      .chat-header {
-        background: #4a90e2;
-        color: white;
-        text-align: center;
-        padding: 15px;
-        font-size: 18px;
-        font-weight: bold;
-      }
+    /* ===== Chatbot Container ===== */
+    .chat-container {
+      width: 420px;
+      height: 640px;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-      .chat-box {
-        flex: 1;
-        padding: 15px;
-        overflow-y: auto;
-        background: #f9f9f9;
-      }
+    .chat-header {
+      background: #4a90e2;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      font-size: 20px;
+      font-weight: 600;
+    }
 
-      .chat-message {
-        margin: 10px 0;
-        padding: 10px 14px;
-        border-radius: 8px;
-        max-width: 100%;
-        line-height: 1.4;
-        white-space: pre-wrap;
-      }
+    .chat-box {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background: #f9f9f9;
+    }
 
-      .user-message {
-        background: #4a90e2;
-        color: white;
-        align-self: flex-end;
-        text-align: right;
-      }
+    .chat-message {
+      margin: 10px 0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      max-width: 100%;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      font-size: 15px;
+    }
 
-      .bot-message {
-        background: #e5e5ea;
-        color: black;
-        align-self: flex-start;
-        text-align: left;
-      }
+    .user-message {
+      background: #4a90e2;
+      color: #fff;
+      align-self: flex-end;
+      text-align: right;
+    }
 
-      .chat-input {
-        display: flex;
-        border-top: 1px solid #ddd;
-      }
+    .bot-message {
+      background: #e5e5ea;
+      color: #000;
+      align-self: flex-start;
+      text-align: left;
+    }
 
-      .chat-input input {
-        flex: 1;
-        padding: 10px;
-        border: none;
-        outline: none;
-      }
+    /* ===== Input Area ===== */
+    .chat-input-area {
+      border-top: 1px solid #ddd;
+      background: #fff;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-      .chat-input button {
-        padding: 10px 15px;
-        background: #4a90e2;
-        color: white;
-        border: none;
-        cursor: pointer;
-        font-weight: bold;
-      }
+    .chat-input {
+      display: flex;
+      gap: 6px;
+    }
 
-      .chat-input button:hover {
-        background: #357ab8;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="chat-container">
-      <div class="chat-header">AI-Audit Assistant</div>
-      <div class="chat-box" id="chat-box"></div>
+    .chat-input input {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 25px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    .chat-input button {
+      padding: 0 20px;
+      background: #4a90e2;
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    .chat-input button:hover {
+      background: #357ab8;
+    }
+
+    /* ===== Quick Option Buttons ===== */
+    .quick-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .quick-options button {
+      border: 1px solid #4a90e2;
+      background: #fff;
+      color: #4a90e2;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .quick-options button:hover {
+      background: #4a90e2;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Team name -->
+  <div class="team-name">Quantanite Innovator</div>
+
+  <!-- Chatbot -->
+  <div class="chat-container">
+    <div class="chat-header">AI-Audit Assistant</div>
+    <div class="chat-box" id="chat-box"></div>
+
+    <!-- Input + Quick Options -->
+    <div class="chat-input-area">
       <div class="chat-input">
-        <input type="text" id="user-input" placeholder="Type your message..." />
+        <input type="text" id="user-input" placeholder="Ask about agent..." />
         <button onclick="sendMessage()">Send</button>
       </div>
+      <div class="quick-options">
+        <button onclick="quickAsk('Agent Name')">Agent Name</button>
+        <button onclick="quickAsk('Agent Performance')">Agent Performance</button>
+        <button onclick="quickAsk('Task Matrics')">Task Matrics</button>
+      </div>
     </div>
+  </div>
 
     <script>
       const chatBox = document.getElementById("chat-box");
