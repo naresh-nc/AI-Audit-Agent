@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-Audit Assistant</title>
+    
+     <style>
+    /* ===== Global Page ===== */
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      /* Deeper blue → pink gradient */
+      background: linear-gradient(135deg, #5aa0ff 0%, #ff79c6 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    /* ===== Team Name Heading ===== */
+    .team-name {
+      font-size: 36px;
+      font-weight: 800;
+      color: #001f4d;
+      /* Navy */
+      text-align: center;
+      letter-spacing: 1px;
+      margin-bottom: 40px;
+      text-transform: uppercase;
+    }
+
+    /* ===== Chatbot Container ===== */
+    .chat-container {
+      width: 420px;
+      height: 640px;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background: #4a90e2;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .chat-box {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background: #f9f9f9;
+    }
+
+    .chat-message {
+      margin: 10px 0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      max-width: 100%;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      font-size: 15px;
+    }
+
+    .user-message {
+      background: #4a90e2;
+      color: #fff;
+      align-self: flex-end;
+      text-align: right;
+    }
+
+    .bot-message {
+      background: #e5e5ea;
+      color: #000;
+      align-self: flex-start;
+      text-align: left;
+    }
+
+    /* ===== Input Area ===== */
+    .chat-input-area {
+      border-top: 1px solid #ddd;
+      background: #fff;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 6px;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 25px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    .chat-input button {
+      padding: 0 20px;
+      background: #4a90e2;
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    .chat-input button:hover {
+      background: #357ab8;
+    }
+
+    /* ===== Quick Option Buttons ===== */
+    .quick-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .quick-options button {
+      border: 1px solid #4a90e2;
+      background: #fff;
+      color: #4a90e2;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .quick-options button:hover {
+      background: #4a90e2;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Team name -->
+  <div class="team-name">Quantanite Innovator</div>
+
+  <!-- Chatbot -->
+  <div class="chat-container">
+    <div class="chat-header">AI-Audit Assistant</div>
+    <div class="chat-box" id="chat-box"></div>
+
+    <!-- Input + Quick Options -->
+    <div class="chat-input-area">
+      <div class="chat-input">
+        <input type="text" id="user-input" placeholder="Ask about agent..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+      <div class="quick-options">
+        <button onclick="quickAsk('Agent Name')">Agent Name</button>
+        <button onclick="quickAsk('Agent Performance')">Agent Performance</button>
+        <button onclick="quickAsk('Task Matrics')">Task Matrics</button>
+      </div>
+    </div>
+  </div>
+
+    <script>
+      const chatBox = document.getElementById("chat-box");
+      const userInput = document.getElementById("user-input");
+
+      // Production webhook
+      const webhookUrl =
+        "https://ca-ai.app.n8n.cloud/webhook/986e46ba-be8f-4045-a16d-329c19494525";
+
+      function appendMessage(message, sender) {
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add(
+          "chat-message",
+          sender === "user" ? "user-message" : "bot-message"
+        );
+        messageDiv.textContent = message;
+        chatBox.appendChild(messageDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        return messageDiv; // Return the element to allow later modification
+      }
+
+      async function sendMessage(customText) {
+        const message = customText || userInput.value.trim();
+        if (!message) return;
+
+        // Show user message
+        appendMessage(message, "user");
+        if (!customText) userInput.value = "";
+
+        // Show loading indicator
+        const loadingDiv = appendMessage("AI assistant is typing...", "bot");
+
+        try {
+          const response = await fetch(webhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: message }),
+          });
+
+          const data = await response.json();
+          const botReply =
+            data?.output ?? data?.answer ?? "I received your message!";
+          const cleaned = botReply.replace(/\*/g, "").trim();
+
+          // Replace loading message with real bot response
+          loadingDiv.textContent = cleaned;
+        } catch (error) {
+          console.error("Error:", error);
+          loadingDiv.textContent = "⚠️ Error connecting to chatbot.";
+        }
+      }
+       
+      function quickAsk(text) {
+      sendMessage(text);
+      }
+
+      // Allow pressing Enter to send
+      userInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") sendMessage();
+      });
+    </script>
+  </body>
