@@ -18,6 +18,20 @@
       height: 100vh;
       margin: 0;
     }
+ /* ===== Login Screen ===== */
+    .login-wrapper {
+      text-align: center;
+    }
+
+    .team-heading {
+      font-size: 28px;
+      font-weight: 800;
+      color: #0a1f44;
+      /* darker navy blue */
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
     /* ===== Team Name Heading ===== */
     .team-name {
@@ -29,6 +43,82 @@
       letter-spacing: 1px;
       margin-bottom: 40px;
       text-transform: uppercase;
+    }
+   .login-container {
+      width: 350px;
+      background: #ffffffdd;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #001f4d;
+    }
+
+    .login-container input {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    .login-container button {
+      padding: 12px;
+      background: #4a90e2;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    .login-container button:hover {
+      background: #357ab8;
+    }
+
+    .error-msg {
+      color: red;
+      font-size: 14px;
+      text-align: center;
+      display: none;
+    }
+
+    /* ===== Chatbot Section ===== */
+    .app {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      position: relative;
+      /* enables absolutely-positioned sign-out button */
+    }
+
+    /* Sign Out button – fixed top-right, not affecting layout */
+    .signout-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ff4b5c;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease;
+      z-index: 10;
+    }
+
+    .signout-btn:hover {
+      background: #e03b4a;
     }
 
     /* ===== Chatbot Container ===== */
@@ -150,6 +240,23 @@
 
 <body>
 
+  <!-- ===== Login Screen ===== -->
+  <div class="login-wrapper" id="login-screen">
+    <div class="team-heading">Quantanite Innovator</div>
+    <div class="login-container">
+      <h2>User Login</h2>
+      <input type="text" id="login-user" placeholder="User Email" />
+      <input type="password" id="login-pass" placeholder="Password" />
+      <button onclick="checkLogin()">Login</button>
+      <div class="error" id="login-error"></div>
+    </div>
+  </div>
+
+  <!-- ===== Chatbot App ===== -->
+  <div class="app" id="chat-app">
+    <!-- Sign-out button now floats independently in the corner -->
+    <button class="signout-btn" onclick="signOut()">Sign Out</button>
+    
   <!-- Team name -->
   <div class="team-name">Quantanite Innovator</div>
 
@@ -168,11 +275,37 @@
         <button onclick="quickAsk('Agent Name')">Agent Name</button>
         <button onclick="quickAsk('Agent Performance')">Agent Performance</button>
         <button onclick="quickAsk('Task Matrics')">Task Matrics</button>
+       </div>
       </div>
     </div>
   </div>
 
     <script>
+    const DEMO_USER = "admin@quantanite.com";
+    const DEMO_PASS = "12345";
+
+    function checkLogin() {
+      const user = document.getElementById("login-user").value.trim();
+      const pass = document.getElementById("login-pass").value.trim();
+      const errorDiv = document.getElementById("login-error");
+
+      if (user === DEMO_USER && pass === DEMO_PASS) {
+        document.getElementById("login-screen").style.display = "none";
+        document.getElementById("chat-app").style.display = "flex";
+      } else {
+        errorDiv.textContent = "Invalid username or password!";
+      }
+    }
+
+    function signOut() {
+      document.getElementById("login-user").value = "";
+      document.getElementById("login-pass").value = "";
+      document.getElementById("login-error").textContent = "";
+      document.getElementById("chat-app").style.display = "none";
+      document.getElementById("login-screen").style.display = "block";
+    }
+
+       // Chatbot logic
       const chatBox = document.getElementById("chat-box");
       const userInput = document.getElementById("user-input");
 
